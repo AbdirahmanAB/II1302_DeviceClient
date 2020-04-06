@@ -9,4 +9,5 @@ setInterval(() => Transmit(), 10000);
 function Transmit() {
   /* This pushes / publishes data to Watson IoT*/
   device.Push('getCurrentMessage');
+  console.log(device.getMessage());
 }

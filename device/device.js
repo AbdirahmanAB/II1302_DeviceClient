@@ -17,10 +17,14 @@ class Device {
   Push(id) {
     this.device.publishHTTPS(id, 'json', JSON.stringify('Any new messages?'), 0);
   }
-  
-  _setup() {
+
+ getMessage(){
+   return stateModule.getState();
+ }
+
+  _setup(){
     var that = this;
-    
+
     /* Connect it to Watson IoT! */
     this.device.connect();
 
@@ -44,8 +48,9 @@ class Device {
       /* When a command is recieved execute code */
       that.device.on("command", function (commandName,format,payload,topic) {
         if(commandName === "currentMessage") {
-            console.log(commandName + ':');
-            console.log(JSON.parse(payload));
+            console.log(commandName + ':'); 
+            stateModule.changeState(JSON.parse(payload));
+            //console.log(stateModule.getState());
         } else {
             console.log("Command not supported.. " + commandName);
         }
@@ -56,6 +61,22 @@ class Device {
     return this.device_connected;
   }
 }
+
+var stateModule = (function () {
+  var state; // Private Variable
+
+  var pub = {};// public object - returned at end of module
+
+  pub.changeState = function (newstate) {
+      state = newstate;
+  };
+
+  pub.getState = function() {
+      return state;
+  }
+
+  return pub; // expose externally
+}());
 
 module.exports = Device;
 
